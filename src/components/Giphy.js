@@ -1,73 +1,87 @@
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components'
 
 
-function useGiphy(query){
-    const [results, setResults] = useState([])
-    const [loading, setLoading] = useState(false)
+function useGiphy(query) {
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-    useEffect(() =>{
-        async function fetchData(){
-            try{
-                const response = await fetch(
-                   `https://api.giphy.com/v1/gifs/search?api_key=UgZiSKVzEPG0qHj2kXWRw2H0s0pi02jT&q=${query}&limit=10&offset=0&rating=g&lang=en`
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setLoading(true);
+        const response = await fetch(
+          `https://api.giphy.com/v1/gifs/search?api_key=UgZiSKVzEPG0qHj2kXWRw2H0s0pi02jT&q=${query}&limit=10&offset=0&rating=g&lang=en`
+        );
+        const json = await response.json();
 
-                );
-                const json = await response.json()
-       setResults(
-         json.data.map(items =>{
-             return items.images.preview.mp4
-         })
-)
-                
-            }catch (error) {}
-        } 
-         if(query !== ''){
-           fetchData()
+        setResults(
+          json.data.map(item => {
+            return item.images.preview.mp4;
+          })
+        );
+      } finally {
+        setLoading(false);
+      }
+    }
 
-         }
-    }, [query])
-    return [results, loading]
-   
+    if (query !== '') {
+      fetchData();
+    }
+  }, [query]);
+
+  return [results, loading];
 }
 
-function Giphy() {
-    const [search, setSearch] = useState('')
-    const [query, setQuery] = useState('')
-    const [results, loading]  = useGiphy(query)
+function AsyncHooks() {
+  const [search, setSearch] = useState('');
+  const [query, setQuery] = useState('');
+  const [results, loading] = useGiphy(query);
 
-    
-    return (
-        <div>
-            <h1> ASK FOR A GIPHY NOW...</h1>
-            <form
-             onSubmit={e => {
-                 e.preventDefault()
-                 setQuery(search)
-             }}
-            >
+  return (
+    <div>
+      <h1>GENERATE GIFS</h1>
+      <form
+        onSubmit={e => {
+          e.preventDefault();
+          setQuery(search);
+        }}
+      >
+        <Input
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder="Search for Gifs!"
+        />
+        <Button type="submit">Search</Button>
+      </form>
+      <br />
+      {loading ? (
+        <h1>GIVE ME GIFS</h1>
+      ) : (
+        results.map(item => <video autoPlay loop key={item} src={item} />)
+      )}
+    </div>
+  );
+      }
 
-            <input type="text"
-            value={search}
-            placeholder = "Search for giphy"
-            onChange={(e) => setSearch(e.target.value)}
-            />
-            <button type="submit">Submit</button>
-            </form>
-            <br/>
+      // STYLES
 
-            {loading ? (
-                <h1>Give Me Gifs</h1>
-            ) : (
-                results.map(item => (
-                    <video autoPlay loop key={item} src={item}/>
-                    ))
-            )}
-            
-          
-        
+const Button = styled.button`
+background-color: blue;
+color: #fff;
+padding: 10px 20px;
+border-color: blue;
+cursor: pointer;
+border-radius: 20px;
+margin-left: 10px
 
-        </div>
-    )
-}
 
-export default Giphy
+`;
+
+const Input  = styled.input`
+padding: 15px
+
+`
+//End of styles
+
+  export default  AsyncHooks
