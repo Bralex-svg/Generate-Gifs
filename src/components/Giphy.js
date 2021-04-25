@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components'
+
 
 
 function useGiphy(query) {
@@ -47,12 +47,12 @@ function AsyncHooks() {
           setQuery(search);
         }}
       >
-        <Input
+        <input
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder="Search for Gifs!"
         />
-        <Button type="submit">Search</Button>
+        <button type="submit">Search</button>
       </form>
       <br />
       {loading ? (
@@ -66,22 +66,7 @@ function AsyncHooks() {
 
       // STYLES
 
-const Button = styled.button`
-background-color: blue;
-color: #fff;
-padding: 10px 20px;
-border-color: blue;
-cursor: pointer;
-border-radius: 20px;
-margin-left: 10px
 
-
-`;
-
-const Input  = styled.input`
-padding: 15px
-
-`
 //End of styles
 
   export default  AsyncHooks
